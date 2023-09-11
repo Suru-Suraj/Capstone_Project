@@ -1,4 +1,6 @@
-resource "aws_key_pair" "capstone" {
-  key_name = "capstone"
-  public_key = file("capstone.pub")  # Replace with the path to your public key file
+resource "aws_vpc" "capstone_vpc" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "capstone_vpc"
+  }
 }
