@@ -42,10 +42,6 @@ resource "aws_route_table_association" "PRIVATE" {
 resource "aws_internet_gateway" "CAPSTONE" {
   vpc_id = aws_vpc.CAPSTONE.id
 }
-resource "aws_internet_gateway_attachment" "VPC_ATTACH" {
-  internet_gateway_id = aws_internet_gateway.CAPSTONE.id
-  vpc_id              = aws_vpc.CAPSTONE.id
-}
 resource "aws_route_table_association" "IG-ROUTE" {
   gateway_id     = aws_internet_gateway.CAPSTONE.id
   route_table_id = aws_route_table.PUBLIC.id
