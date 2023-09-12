@@ -18,7 +18,7 @@ resource "aws_subnet" "PUBLIC-2" {
 }
 resource "aws_subnet" "PRIVATE" {
   vpc_id     = aws_vpc.CAPSTONE.id
-  cidr_block = "10.0.2.0/24"
+  cidr_block = "10.0.3.0/24"
   availability_zone = "us-east-1c"
 }
 resource "aws_route_table" "PUBLIC" {
