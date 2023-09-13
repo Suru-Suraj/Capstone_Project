@@ -127,24 +127,24 @@ resource "aws_key_pair" "CAPSTONE" {
   key_name = "CAPSTONE"
   public_key = file("~/.ssh/capstone.pub")
 }
-resource "aws_instance" "CAPSTONE(PUBLIC)" {
+resource "aws_instance" "CAPSTONE-PUBLIC" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
   subnet_id = aws_subnet.PUBLIC-1.id
   key_name = aws_key_pair.CAPSTONE.key_name
   tags = {
-    Name = "CAPSTONE(PUBLIC)"
+    Name = "CAPSTONE-PUBLIC"
   }
 }
-resource "aws_instance" "CAPSTONE(PRIVATE)" {
+resource "aws_instance" "CAPSTONE-PRIVATE" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
   subnet_id = aws_subnet.PRIVATE.id
   key_name = aws_key_pair.CAPSTONE.key_name
   tags = {
-    Name = "CAPSTONE(PRIVATE)"
+    Name = "CAPSTONE-PRIVATE"
   }
 }
 output "private_ip" {
