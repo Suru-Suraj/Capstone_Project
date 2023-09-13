@@ -62,10 +62,12 @@ resource "aws_internet_gateway" "CAPSTONE" {
     Name = "CAPSTONE"
   }
 }
-resource "aws_route_table_association" "b" {
-  gateway_id     = aws_internet_gateway.CAPSTONE.id
-  route_table_id = aws_route_table.PUBLIC.id
+resource "aws_route" "internet_gateway_route" {
+  route_table_id         = aws_route_table.PUBLIC.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.CAPSTONE.id
 }
+
 resource "aws_eip" "CAPSTONE" {
   domain   = "vpc"
   tags = {
@@ -80,7 +82,8 @@ resource "aws_nat_gateway" "CAPSTONE" {
   }
 }
 resource "aws_route" "r" {
-  route_table_id              = aws_route_table.PRIVATE.id
+  route_table_id  = aws_route_table.PRIVATE.id
+  destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id  = aws_nat_gateway.CAPSTONE.id
 }
 
