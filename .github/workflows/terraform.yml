@@ -39,7 +39,9 @@ jobs:
       run: terraform apply -input=false -auto-approve 
     - name: Terraform Output(private)
       run: terraform output private_ip
-    - name: Terraform Output(public)
-      run: terraform output public_ip
+    - name: Terraform Output(public)-private
+      run: terraform output public_private_ip
+    - name: Terraform Output(public)-public
+      run: terraform output public_public_ip
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
