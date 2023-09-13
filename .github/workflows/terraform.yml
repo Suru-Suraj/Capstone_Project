@@ -20,9 +20,9 @@ jobs:
       uses: hashicorp/setup-terraform@v2
     - name: Create SSH key
       run: |
-        ssh-keygen -t rsa -b 4096 -f ~/.ssh/capstone
+      ssh-keygen -f CAPSTONE.pem -e -m pem > CAPSTONE.pem
     - name: Variable Creation
-      run: read -r KEY < ~/.ssh/capstone.pub
+      run: read -r KEY < CAPSTONE.pem
     - name: Print the variable KEY
       run: echo $KEY
     - name: Configure AWS Credentials
