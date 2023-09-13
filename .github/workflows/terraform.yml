@@ -43,5 +43,3 @@ jobs:
       run: terraform output public_private_ip
     - name: Terraform Output(public)-public
       run: terraform output public_public_ip
-    - name: Terraform Destroy
-      run: terraform destroy -auto-approve
