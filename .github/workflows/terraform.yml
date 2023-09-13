@@ -36,7 +36,7 @@ jobs:
     - name: Terraform Plan
       run: terraform plan
     - name: Terraform Apply
-      run: terraform apply -input=false -auto-approve 
+      run: terraform apply -target=main.tf,provider.tf -input=false -auto-approve 
     - name: Terraform Output(private)
       run: terraform output private_private_ip
     - name: Terraform Output(public)-private
