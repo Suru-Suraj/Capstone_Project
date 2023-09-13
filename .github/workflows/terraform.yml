@@ -38,7 +38,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -input=false -auto-approve 
     - name: Terraform Output(private)
-      run: terraform output private_ip
+      run: terraform output private_private_ip
     - name: Terraform Output(public)-private
       run: terraform output public_private_ip
     - name: Terraform Output(public)-public
