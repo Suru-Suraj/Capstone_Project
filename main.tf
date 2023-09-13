@@ -64,7 +64,7 @@ resource "aws_internet_gateway" "CAPSTONE" {
 }
 resource "aws_route" "CAPSTONE" {
   route_table_id = aws_route_table.PUBLIC.id
-  destination_cidr_block = "0.0.0.0/0"
+  destination_cidr_block = aws_vpc.CAPSTONE.cidr_block
   gateway_id = aws_internet_gateway.CAPSTONE.id
 }
 resource "aws_eip" "CAPSTONE" {
