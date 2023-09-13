@@ -129,7 +129,13 @@ resource "aws_instance" "CAPSTONE" {
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
   subnet_id = aws_subnet.PRIVATE.id
+  output "private_ip" {
+    value = private_ip
+  }
 
+  output "public_ip" {
+    value = public_ip
+  }
   tags = {
     Name = "CAPSTONE"
   }
