@@ -34,6 +34,10 @@ resource "aws_subnet" "PRIVATE" {
 }
 resource "aws_route_table" "PUBLIC" {
   vpc_id = aws_vpc.CAPSTONE.id
+    route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.CAPSTONE.id
+  }
   tags = {
     Name = "PUBLIC"
   }
