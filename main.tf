@@ -10,7 +10,6 @@ resource "aws_subnet" "PUBLIC-1" {
   vpc_id     = aws_vpc.CAPSTONE.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "us-east-1a"
-  map_public_ip_on_launch = true
   tags = {
     Name = "PUBLIC-1"
   }
@@ -19,7 +18,6 @@ resource "aws_subnet" "PUBLIC-2" {
   vpc_id     = aws_vpc.CAPSTONE.id
   cidr_block = "10.0.2.0/24"
   availability_zone = "us-east-1b"
-  map_public_ip_on_launch = true
   tags = {
     Name = "PUBLIC-2"
   }
@@ -93,6 +91,13 @@ resource "aws_security_group" "CAPSTONE" {
     description      = "TLS from VPC"
     from_port        = 443
     to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = [aws_vpc.CAPSTONE.cidr_block]
+  }
+  ingress {
+    description      = "TLS from VPC"
+    from_port        = 22
+    to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = [aws_vpc.CAPSTONE.cidr_block]
   }

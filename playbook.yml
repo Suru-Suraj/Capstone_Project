@@ -1,0 +1,25 @@
+---
+- name: Docker
+  hosts: all
+  become: true
+  tasks:
+   - name: updating cache
+     apt:
+       update_cache: yes
+   - name: Installing docker
+     apt: 
+        name: docker.io
+        state: present
+   - name: Enabling docker
+     service:
+        name: docker
+        state: started
+        enabled: true
+   - name: pull my image from dockerhub
+     command: docker pull surusuraj200021/suru:node
+   - name: run my image as docker container
+     docker_container:
+       name: CAPSTONE
+       image: surusuraj200021/suru:node
+       state: started
+       ports: 3000:3000
