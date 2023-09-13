@@ -34,20 +34,12 @@ resource "aws_subnet" "PRIVATE" {
 }
 resource "aws_route_table" "PUBLIC" {
   vpc_id = aws_vpc.CAPSTONE.id
-    route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.CAPSTONE.id
-  }
   tags = {
     Name = "PUBLIC"
   }
 }
 resource "aws_route_table" "PRIVATE" {
   vpc_id = aws_vpc.CAPSTONE.id
-    route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.CAPSTONE.id
-  }
   tags = {
     Name = "PRIVATE"
   }
@@ -70,9 +62,10 @@ resource "aws_internet_gateway" "CAPSTONE" {
     Name = "CAPSTONE"
   }
 }
-resource "aws_route_table_association" "IG-ROUTE" {
-  gateway_id     = aws_internet_gateway.CAPSTONE.id
+resource "aws_route" "CAPSTONE" {
   route_table_id = aws_route_table.PUBLIC.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.CAPSTONE.id
 }
 resource "aws_eip" "CAPSTONE" {
   domain   = "vpc"
@@ -98,14 +91,14 @@ resource "aws_security_group" "CAPSTONE" {
     from_port        = 443
     to_port          = 443
     protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.CAPSTONE.cidr_block]
+    cidr_blocks      = ["0.0.0.0/0"]
   }
   ingress {
     description      = "TLS from VPC"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.CAPSTONE.cidr_block]
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
     ingress {
@@ -113,7 +106,7 @@ resource "aws_security_group" "CAPSTONE" {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.CAPSTONE.cidr_block]
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
     ingress {
@@ -121,7 +114,7 @@ resource "aws_security_group" "CAPSTONE" {
     from_port        = 3000
     to_port          = 3000
     protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.CAPSTONE.cidr_block]
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   egress {
