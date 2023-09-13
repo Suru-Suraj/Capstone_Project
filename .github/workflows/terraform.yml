@@ -18,6 +18,13 @@ jobs:
       uses: actions/checkout@v3
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
+    - name: Create SSH key
+      run: |
+        ssh-keygen -t rsa -b 4096 -f ~/.ssh/capstone
+    - name: Variable Creation
+      run: read -r KEY < ~/.ssh/capstone.pub
+    - name: Print the variable KEY
+      run: echo $KEY
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v3
       with:
