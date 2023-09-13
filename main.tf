@@ -147,9 +147,14 @@ resource "aws_instance" "CAPSTONE-PRIVATE" {
     Name = "CAPSTONE-PRIVATE"
   }
 }
-output "private_ip" {
-  value = aws_instance.CAPSTONE.private_ip
+output "public_private_ip" {
+  value = aws_instance.CAPSTONE-PUBLIC.private_ip
 }
-output "public_ip" {
-  value = aws_instance.CAPSTONE.private_ip
+
+output "public_public_ip" {
+  value = aws_instance.CAPSTONE-PUBLIC.public_ip
+}
+
+output "private_private_ip" {
+  value = aws_instance.CAPSTONE-PRIVATE.private_ip
 }
