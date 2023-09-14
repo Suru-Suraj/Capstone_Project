@@ -150,6 +150,17 @@ resource "aws_security_group" "CAPSTONE" {
   }
 }
 
+resource "aws_instance" "CAPSTONE" {
+  ami           = "ami-06a0a61d43cf06546"
+  instance_type = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
+  subnet_id = aws_subnet.PRIVATE.id
+  key_name = "suru"
+  tags = {
+    Name = "CAPSTONE-PUBLIC"
+  }
+}
+
 resource "aws_lb_target_group" "CAPSTONE" {
   name     = "CAPSTONE"
   port     = 3000
@@ -182,7 +193,7 @@ resource "aws_elb" "CAPSTONE" {
     interval            = 30
   }
 
-  instances                   = [aws_instance.CAPSTONE-PUBLIC.id]
+  instances                   = [aws_instance.CAPSTONE.id]
   cross_zone_load_balancing   = true
   idle_timeout                = 400
   connection_draining         = true
@@ -193,7 +204,7 @@ resource "aws_elb" "CAPSTONE" {
   }
 }
 
-output "lb_dns_name" {
+output "lb_dns" {
   value = aws_elb.CAPSTONE.dns_name
 }
 
@@ -204,7 +215,7 @@ resource "aws_launch_template" "CAPSTONE" {
 }
 
 resource "aws_autoscaling_group" "CAPSTONE" {
-  vpc_zone_identifier = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-1.id]
+  vpc_zone_identifier = [aws_subnet.PRIVATE.id]
   desired_capacity   = 1
   max_size           = 1
   min_size           = 1
@@ -213,16 +224,4 @@ resource "aws_autoscaling_group" "CAPSTONE" {
     id      = aws_launch_template.CAPSTONE.id
     version = "$Latest"
   }
-}
-
-output "public_private_ip" {
-  value = aws_instance.CAPSTONE-PUBLIC.private_ip
-}
-
-output "public_public_ip" {
-  value = aws_instance.CAPSTONE-PUBLIC.public_ip
-}
-
-output "private_private_ip" {
-  value = aws_instance.CAPSTONE-PRIVATE.private_ip
 }
