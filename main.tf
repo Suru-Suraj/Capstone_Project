@@ -79,7 +79,6 @@ resource "aws_route" "internet_gateway_route" {
 }
 
 resource "aws_eip" "CAPSTONE" {
-  vpc      = true
   domain = "vpc"
   tags = {
     Name = "CAPSTONE"
