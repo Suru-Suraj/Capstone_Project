@@ -184,13 +184,6 @@ output "private_private_ip" {
   value = aws_instance.CAPSTONE-PRIVATE.private_ip
 }
 
-
-
-
-
-
-
-
 resource "aws_lb_target_group" "CAPSTONE" {
   name     = "CAPSTONE"
   port     = 3000
@@ -237,13 +230,6 @@ resource "aws_elb" "CAPSTONE" {
 output "lb_dns_name" {
   value = aws_elb.CAPSTONE.dns_name
 }
-
-
-
-
-
-
-
 
 resource "aws_launch_template" "CAPSTONE" {
   name_prefix   = "CAPSTONE"
