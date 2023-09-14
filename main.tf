@@ -229,7 +229,7 @@ resource "aws_elb" "CAPSTONE" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "TCP:3000/"
+    target              = "TCP:3000"
     interval            = 30
   }
 
