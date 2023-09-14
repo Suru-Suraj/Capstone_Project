@@ -26,6 +26,10 @@ jobs:
         aws-region: us-east-1
     - name: ls
       run: ls
+    - name: Change the Directory
+      run: cd Terraform_and_Ansible
+    - name: ls
+      run: ls
     - name: Terraform Init
       run: terraform init -chdir Terraform_and_Ansible
     - name: Terraform Plan
