@@ -184,26 +184,12 @@ output "private_private_ip" {
   value = aws_instance.CAPSTONE-PRIVATE.private_ip
 }
 
-resource "aws_launch_template" "CAPSTONE" {
-  name_prefix = "CAPSTONE"
-  image_id = "ami-06a0a61d43cf06546"
-  instance_type = "t2.micro"
-  key_name = "suru"
-  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
-    block_device_mappings {
-    device_name = "/dev/sda1"
-    ebs {
-      volume_size = 8
-      delete_on_termination = true
-    }
-  }
-  tag_specifications {
-    resource_type = "instance"
-    tags = {
-      Name = "test"
-    }
-  }
-}
+
+
+
+
+
+
 
 resource "aws_lb_target_group" "CAPSTONE" {
   name     = "CAPSTONE"
@@ -252,12 +238,27 @@ output "lb_dns_name" {
   value = aws_elb.CAPSTONE.dns_name
 }
 
+
+
+
+
+
+
+
+resource "aws_launch_template" "CAPSTONE" {
+  name_prefix   = "CAPSTONE"
+  image_id      = "ami-06a0a61d43cf06546"
+  instance_type = "t2.micro"
+}
+
 resource "aws_autoscaling_group" "CAPSTONE" {
+  availability_zones = ["us-east-1a","us-east-1a"]
+  desired_capacity   = 1
+  max_size           = 1
+  min_size           = 1
+
   launch_template {
-    id = aws_launch_template.CAPSTONE.id
+    id      = aws_launch_template.CAPSTONE.id
+    version = "$Latest"
   }
-  min_size = 1
-  max_size = 1
-  desired_capacity = 1
-  availability_zones = ["us-east-1a","us-east-1b"]
 }
