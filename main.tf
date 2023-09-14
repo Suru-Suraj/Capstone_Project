@@ -80,6 +80,7 @@ resource "aws_route" "internet_gateway_route" {
 
 resource "aws_eip" "CAPSTONE" {
   vpc      = true
+  domain = "vpc"
   tags = {
     Name = "CAPSTONE"
   }
@@ -214,7 +215,7 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
 
 resource "aws_s3_bucket" "capstone764001" {
   bucket = "capstone764001"
-  permissions = "FULL_CONTROL"
+  permissions = FULL_CONTROL
 
   tags = {
     Name        = "CAPSTONE"
