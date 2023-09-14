@@ -151,7 +151,7 @@ resource "aws_security_group" "CAPSTONE" {
 }
 
 resource "aws_instance" "CAPSTONE-PUBLIC" {
-  ami           = "ami-053b0d53c279acc90"
+  ami           = "ami-06a0a61d43cf06546"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
   subnet_id = aws_subnet.PUBLIC-1.id
@@ -182,4 +182,69 @@ output "public_public_ip" {
 
 output "private_private_ip" {
   value = aws_instance.CAPSTONE-PRIVATE.private_ip
+}
+
+resource "aws_lb_target_group" "CAPSTONE" {
+  name     = "CAPSTONE"
+  port     = 3000
+  protocol = "TCP"
+  vpc_id   = aws_vpc.CAPSTONE.id
+}
+
+resource "aws_lb_target_group_attachment" "CAPSTONE" {
+  target_group_arn = aws_lb_target_group.CAPSTONE.arn
+  target_id        = aws_instance.CAPSTONE-PUBLIC.id
+  port             = 3000
+}
+
+resource "aws_elb" "CAPSTONE" {
+  name               = "CAPSTONE"
+  internal           = false
+  subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
+  security_groups = [aws_security_group.CAPSTONE.id]
+  listener {
+    instance_port     = 3000
+    instance_protocol = "tcp"
+    lb_port           = 3000
+    lb_protocol       = "tcp"
+  }
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "TCP:3000"
+    interval            = 30
+  }
+
+  instances                   = [aws_instance.CAPSTONE-PUBLIC.id]
+  cross_zone_load_balancing   = true
+  idle_timeout                = 400
+  connection_draining         = true
+  connection_draining_timeout = 400
+
+  tags = {
+    Name = "CAPSTONE"
+  }
+}
+
+output "lb_dns_name" {
+  value = aws_elb.CAPSTONE.dns_name
+}
+
+resource "aws_launch_template" "CAPSTONE" {
+  name_prefix   = "CAPSTONE"
+  image_id      = "ami-06a0a61d43cf06546"
+  instance_type = "t2.micro"
+}
+
+resource "aws_autoscaling_group" "CAPSTONE" {
+  vpc_zone_identifier = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-1.id]
+  desired_capacity   = 1
+  max_size           = 1
+  min_size           = 1
+
+  launch_template {
+    id      = aws_launch_template.CAPSTONE.id
+    version = "$Latest"
+  }
 }
