@@ -202,3 +202,54 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
   target_id        = aws_instance.CAPSTONE-PUBLIC.id
   port             = 3000
 }
+
+
+
+
+
+
+resource "aws_lb" "CAPSTONE" {
+  name               = "CAPSTONE"
+  internal           = false
+  enable_deletion_protection = false 
+  subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
+}
+
+ 
+
+resource "aws_lb_listener" "terr_lb_listener" {
+  load_balancer_arn = aws_lb.CAPSTONE.arn
+  port              = 3000
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.CAPSTONE.arn
+  }
+}
+
+ 
+
+output "lb_dns_name" {
+  value = aws_lb.CAPSTONE.dns_name
+}
+
+
+
+
+
+
+
+
+
+resource "aws_autoscaling_group" "CAPSTONE" {
+  availability_zones = ["us-east-1a","us-east-1b"]
+  desired_capacity   = 1
+  max_size           = 1
+  min_size           = 1
+
+  launch_template {
+    id      = aws_launch_template.CAPSTONE.id
+    version = "$Latest"
+  }
+}
