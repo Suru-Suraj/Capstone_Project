@@ -29,10 +29,13 @@ jobs:
       working-directory: Terraform_and_Ansible
     - name: Terraform Plan
       run: terraform plan
+      working-directory: Terraform_and_Ansible
     - name: Terraform Apply
       run: terraform apply -input=false -auto-approve 
+      working-directory: Terraform_and_Ansible
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
+      working-directory: Terraform_and_Ansible
       if: failure() || success()
     - name: Terraform Output(private)
       run: terraform output private_private_ip
