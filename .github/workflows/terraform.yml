@@ -25,11 +25,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
     - name: Terraform Init
-      run: terraform init -target=main-2.tf
+      run: terraform init 
     - name: Terraform Plan
-      run: terraform plan -target=main-2.tf
+      run: terraform plan 
     - name: Terraform Apply
-      run: terraform apply -input=false -auto-approve -target=main-2.tf
+      run: terraform apply -input=false -auto-approve
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
       if: failure()
