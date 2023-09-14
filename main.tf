@@ -257,5 +257,5 @@ resource "aws_autoscaling_group" "CAPSTONE" {
   min_size = 1
   max_size = 1
   desired_capacity = 1
-  vpc_zone_identifier = [aws_subnet.CAPSTONE.id]
+  availability_zones = ["us-east-1a","us-east-1b"]
 }
