@@ -37,9 +37,6 @@ jobs:
       run: terraform destroy -auto-approve
       working-directory: Autoscaling_and_LoadBalancing
       if: failure() || success()
-    - name: Terraform Output(private)
-      run: terraform output private_private_ip
-    - name: Terraform Output(public)-private
-      run: terraform output public_private_ip
-    - name: Terraform Output(public)-public
-      run: terraform output public_public_ip
+    - name: Terraform Output(Load Balancer DNS)
+      run: terraform output lb_dns
+      working-directory: Autoscaling_and_LoadBalancing

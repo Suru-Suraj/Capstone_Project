@@ -37,5 +37,6 @@ jobs:
       run: terraform destroy -auto-approve
       working-directory: AMI
       if: failure() || success()
-    - name: Terraform Output(AMI-ID)_
+    - name: Terraform Output(AMI-ID)
       run: terraform output ami_id
+      working-directory: AMI

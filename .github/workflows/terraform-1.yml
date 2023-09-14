@@ -39,7 +39,10 @@ jobs:
       if: failure() || success()
     - name: Terraform Output(private)
       run: terraform output public_ip
+      working-directory: Terraform_and_Ansible
     - name: Terraform Output(public)-private
       run: terraform output private_ip
+      working-directory: Terraform_and_Ansible
     - name: Instance ID
       run: terraform output instance_id
+      working-directory: Terraform_and_Ansible
