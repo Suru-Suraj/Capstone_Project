@@ -166,3 +166,27 @@ output "public_public_ip" {
 output "private_private_ip" {
   value = aws_instance.CAPSTONE-PRIVATE.private_ip
 }
+
+
+resource "aws_launch_template" "CAPSTONE" {
+  name = "CAPSTONE"
+  image_id = "ami-06a0a61d43cf06546"
+  instance_type = "t2.micro"
+  key_name = "suru"
+  subnet_id = aws_subnet.PUBLIC-1.id
+  vpc_security_group_ids = aws_security_group.CAPSTONE.id
+  ebs {
+      volume_size = 20
+      delete_on_termination = true
+    }
+  network_interfaces {
+    associate_public_ip_address = true
+  }
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "test"
+    }
+  }
+}
