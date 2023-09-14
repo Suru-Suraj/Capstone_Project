@@ -80,20 +80,26 @@ resource "aws_route" "internet_gateway_route" {
 
 resource "aws_eip" "CAPSTONE" {
   instance = aws_instance.CAPSTONE-PUBLIC.id
-}
+  vpc      = true
 
-resource "aws_nat_gateway" "CAPSTONE" {
-  allocation_id = aws_eip.CAPSTONE.id
-  subnet_id     = aws_subnet.PUBLIC-1.id
   tags = {
     Name = "CAPSTONE"
   }
 }
 
-resource "aws_route" "private_route" {
-  route_table_id         = aws_route_table.PRIVATE.id
+resource "aws_nat_gateway" "CAPSTONE" {
+  allocation_id = aws_eip.CAPSTONE.id
+  subnet_id     = aws_subnet.PUBLIC-1.id
+
+  tags = {
+    Name = "CAPSTONE"
+  }
+}
+
+resource "aws_route" "CAPSTONE" {
+  route_table_id  = aws_route_table.PRIVATE.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id          = aws_nat_gateway.CAPSTONE.id
+  nat_gateway_id  = aws_nat_gateway.CAPSTONE.id
 }
 
 resource "aws_security_group" "CAPSTONE" {
@@ -126,7 +132,7 @@ resource "aws_security_group" "CAPSTONE" {
   }
 
   ingress {
-    description      = "Custom App Port from VPC"
+    description      = "Custom port 3000 from VPC"
     from_port        = 3000
     to_port          = 3000
     protocol         = "tcp"
@@ -139,6 +145,10 @@ resource "aws_security_group" "CAPSTONE" {
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "CAPSTONE"
   }
 }
 
@@ -219,7 +229,7 @@ resource "aws_elb" "CAPSTONE" {
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
   access_logs {
     bucket        = aws_s3_bucket.capstone764001.bucket
-    bucket_prefix = "CAPSTONE"
+    bucket_prefix = "capstone764001"
     interval      = 60
   }
   security_groups = [aws_security_group.CAPSTONE.id]
@@ -236,6 +246,7 @@ resource "aws_elb" "CAPSTONE" {
     target              = "TCP:3000"
     interval            = 30
   }
+
   instances                   = [aws_instance.CAPSTONE-PUBLIC.id]
   cross_zone_load_balancing   = true
   idle_timeout                = 400
@@ -252,7 +263,7 @@ output "lb_dns_name" {
 }
 
 resource "aws_autoscaling_group" "CAPSTONE" {
-  availability_zones = ["us-east-1a", "us-east-1b"]
+  availability_zones = ["us-east-1a","us-east-1b"]
   desired_capacity   = 1
   max_size           = 1
   min_size           = 1
