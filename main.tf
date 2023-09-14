@@ -257,9 +257,5 @@ resource "aws_autoscaling_group" "CAPSTONE" {
   desired_capacity   = 1
   max_size           = 1
   min_size           = 1
-
-  launch_template {
-    id      = aws_launch_template.CAPSTONE.id
-    version = "$Latest"
-  }
+  launch_template = aws_launch_template.CAPSTONE.id
 }
