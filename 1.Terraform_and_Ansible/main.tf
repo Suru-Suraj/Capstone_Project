@@ -7,32 +7,13 @@ resource "aws_vpc" "CAPSTONE" {
   }
 }
 
-resource "aws_subnet" "PUBLIC-1" {
+resource "aws_subnet" "PUBLIC" {
   vpc_id     = aws_vpc.CAPSTONE.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "PUBLIC-1"
-  }
-}
-
-resource "aws_subnet" "PUBLIC-2" {
-  vpc_id     = aws_vpc.CAPSTONE.id
-  cidr_block = "10.0.2.0/24"
-  availability_zone = "us-east-1b"
-  map_public_ip_on_launch = true
-  tags = {
-    Name = "PUBLIC-2"
-  }
-}
-
-resource "aws_subnet" "PRIVATE" {
-  vpc_id     = aws_vpc.CAPSTONE.id
-  cidr_block = "10.0.3.0/24"
-  availability_zone = "us-east-1c"
-  tags = {
-    Name = "PRIVATE"
   }
 }
 
@@ -43,26 +24,9 @@ resource "aws_route_table" "PUBLIC" {
   }
 }
 
-resource "aws_route_table" "PRIVATE" {
-  vpc_id = aws_vpc.CAPSTONE.id
-  tags = {
-    Name = "PRIVATE"
-  }
-}
-
-resource "aws_route_table_association" "PUBLIC-1" {
-  subnet_id      = aws_subnet.PUBLIC-1.id
+resource "aws_route_table_association" "PUBLIC" {
+  subnet_id      = aws_subnet.PUBLIC.id
   route_table_id = aws_route_table.PUBLIC.id
-}
-
-resource "aws_route_table_association" "PUBLIC-2" {
-  subnet_id      = aws_subnet.PUBLIC-2.id
-  route_table_id = aws_route_table.PUBLIC.id
-}
-
-resource "aws_route_table_association" "PRIVATE" {
-  subnet_id      = aws_subnet.PRIVATE.id
-  route_table_id = aws_route_table.PRIVATE.id
 }
 
 resource "aws_internet_gateway" "CAPSTONE" {
@@ -72,36 +36,14 @@ resource "aws_internet_gateway" "CAPSTONE" {
   }
 }
 
-resource "aws_route" "internet_gateway_route" {
+resource "aws_route" "CAPSTONE" {
   route_table_id         = aws_route_table.PUBLIC.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.CAPSTONE.id
 }
 
-resource "aws_eip" "CAPSTONE" {
-  domain = "vpc"
-  tags = {
-    Name = "CAPSTONE"
-  }
-}
-
-resource "aws_nat_gateway" "CAPSTONE" {
-  allocation_id = aws_eip.CAPSTONE.id
-  subnet_id     = aws_subnet.PUBLIC-1.id
-
-  tags = {
-    Name = "CAPSTONE"
-  }
-}
-
-resource "aws_route" "CAPSTONE" {
-  route_table_id  = aws_route_table.PRIVATE.id
-  destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id  = aws_nat_gateway.CAPSTONE.id
-}
-
 resource "aws_security_group" "CAPSTONE" {
-  name        = "allow_tls"
+  name        = "CAPSTONE"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.CAPSTONE.id
 
@@ -150,36 +92,21 @@ resource "aws_security_group" "CAPSTONE" {
   }
 }
 
-resource "aws_instance" "CAPSTONE-PUBLIC" {
+resource "aws_instance" "CAPSTONE" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
-  subnet_id = aws_subnet.PUBLIC-1.id
+  subnet_id = aws_subnet.PUBLIC.id
   key_name = "suru"
   tags = {
     Name = "CAPSTONE-PUBLIC"
   }
 }
 
-resource "aws_instance" "CAPSTONE-PRIVATE" {
-  ami           = "ami-053b0d53c279acc90"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
-  subnet_id = aws_subnet.PRIVATE.id
-  key_name = "suru"
-  tags = {
-    Name = "CAPSTONE-PRIVATE"
-  }
+output "private_ip" {
+  value = aws_instance.CAPSTONE.private_ip
 }
 
-output "public_private_ip" {
-  value = aws_instance.CAPSTONE-PUBLIC.private_ip
-}
-
-output "public_public_ip" {
-  value = aws_instance.CAPSTONE-PUBLIC.public_ip
-}
-
-output "private_private_ip" {
-  value = aws_instance.CAPSTONE-PRIVATE.private_ip
+output "public_ip" {
+  value = aws_instance.CAPSTONE.public_ip
 }

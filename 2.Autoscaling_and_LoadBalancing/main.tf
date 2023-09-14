@@ -150,40 +150,6 @@ resource "aws_security_group" "CAPSTONE" {
   }
 }
 
-resource "aws_instance" "CAPSTONE-PUBLIC" {
-  ami           = "ami-06a0a61d43cf06546"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
-  subnet_id = aws_subnet.PUBLIC-1.id
-  key_name = "suru"
-  tags = {
-    Name = "CAPSTONE-PUBLIC"
-  }
-}
-
-resource "aws_instance" "CAPSTONE-PRIVATE" {
-  ami           = "ami-053b0d53c279acc90"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
-  subnet_id = aws_subnet.PRIVATE.id
-  key_name = "suru"
-  tags = {
-    Name = "CAPSTONE-PRIVATE"
-  }
-}
-
-output "public_private_ip" {
-  value = aws_instance.CAPSTONE-PUBLIC.private_ip
-}
-
-output "public_public_ip" {
-  value = aws_instance.CAPSTONE-PUBLIC.public_ip
-}
-
-output "private_private_ip" {
-  value = aws_instance.CAPSTONE-PRIVATE.private_ip
-}
-
 resource "aws_lb_target_group" "CAPSTONE" {
   name     = "CAPSTONE"
   port     = 3000
@@ -247,4 +213,16 @@ resource "aws_autoscaling_group" "CAPSTONE" {
     id      = aws_launch_template.CAPSTONE.id
     version = "$Latest"
   }
+}
+
+output "public_private_ip" {
+  value = aws_instance.CAPSTONE-PUBLIC.private_ip
+}
+
+output "public_public_ip" {
+  value = aws_instance.CAPSTONE-PUBLIC.public_ip
+}
+
+output "private_private_ip" {
+  value = aws_instance.CAPSTONE-PRIVATE.private_ip
 }

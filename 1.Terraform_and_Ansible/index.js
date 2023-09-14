@@ -6,4 +6,4 @@ const server = http.createServer((req, res) => {
   res.end('Hello, world!');
 });
 
-server.listen(80);
+server.listen(3000);
