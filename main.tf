@@ -182,3 +182,23 @@ resource "aws_launch_template" "CAPSTONE" {
     }
   }
 }
+
+
+
+
+
+
+resource "aws_lb_target_group" "CAPSTONE" {
+  name     = "CAPSTONE"
+  port     = 3000
+  protocol = "TCP"
+  vpc_id   = aws_vpc.CAPSTONE.id
+}
+
+ 
+
+resource "aws_lb_target_group_attachment" "CAPSTONE" {
+  target_group_arn = aws_lb_target_group.CAPSTONE.arn
+  target_id        = aws_instance.CAPSTONE-PUBLIC.id
+  port             = 3000
+}
