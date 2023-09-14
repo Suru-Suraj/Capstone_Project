@@ -207,6 +207,18 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
 
 
 
+resource "aws_s3_bucket" "CAPSTONE" {
+  bucket = "CAPSTONE"
+
+  tags = {
+    Name        = "CAPSTONE"
+    Environment = "production"
+  }
+}
+
+
+
+
 
 resource "aws_elb" "CAPSTONE" {
   name               = "CAPSTONE"
