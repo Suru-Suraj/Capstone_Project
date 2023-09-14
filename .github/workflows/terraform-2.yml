@@ -16,10 +16,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Debug
-      run: |
-        ls -l /home/runner/work/Capstone_Project/Capstone_Project
-      shell: bash
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
     - name: Configure AWS Credentials
@@ -30,17 +26,17 @@ jobs:
         aws-region: us-east-1
     - name: Terraform Init
       run: terraform init
-      working-directory: Autoscaling_and_LoadBalancing
+      working-directory: 2.Autoscaling_and_LoadBalancing
     - name: Terraform Plan
       run: terraform plan
-      working-directory: Autoscaling_and_LoadBalancing
+      working-directory: 2.Autoscaling_and_LoadBalancing
     - name: Terraform Apply
       run: terraform apply -input=false -auto-approve 
-      working-directory: Autoscaling_and_LoadBalancing
+      working-directory: 2.Autoscaling_and_LoadBalancing
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
-      working-directory: Autoscaling_and_LoadBalancing
+      working-directory: 2.Autoscaling_and_LoadBalancing
       if: failure() || success()
     - name: Terraform Output(Load Balancer DNS)
       run: terraform output lb_dns
-      working-directory: Autoscaling_and_LoadBalancing
+      working-directory: 2.Autoscaling_and_LoadBalancing
