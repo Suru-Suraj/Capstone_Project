@@ -253,9 +253,9 @@ output "lb_dns_name" {
 }
 
 resource "aws_autoscaling_group" "CAPSTONE" {
-  availability_zones = ["us-east-1a","us-east-1b"]
-  desired_capacity   = 1
-  max_size           = 1
-  min_size           = 1
   launch_template = aws_launch_template.CAPSTONE.id
+  min_size = 1
+  max_size = 1
+  desired_capacity = 1
+  vpc_zone_identifier = [aws_subnet.CAPSTONE.id]
 }
