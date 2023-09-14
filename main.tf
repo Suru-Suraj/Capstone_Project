@@ -212,12 +212,12 @@ resource "aws_elb" "CAPSTONE" {
   name               = "CAPSTONE"
   availability_zones = ["us-east-1a", "us-east-1b"]
   internal           = false
+  subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
   access_logs {
     bucket        = "CAPSTONE"
     bucket_prefix = "CAPSTONE"
     interval      = 60
   }
-  subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
   security_groups = [aws_security_group.CAPSTONE.id]
   listener {
     instance_port     = 3000
