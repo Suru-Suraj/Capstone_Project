@@ -238,6 +238,13 @@ output "lb_dns_name" {
   value = aws_elb.CAPSTONE.dns_name
 }
 
+
+
+
+
+
+
+
 resource "aws_launch_template" "CAPSTONE" {
   name_prefix   = "CAPSTONE"
   image_id      = "ami-06a0a61d43cf06546"
@@ -245,7 +252,7 @@ resource "aws_launch_template" "CAPSTONE" {
 }
 
 resource "aws_autoscaling_group" "CAPSTONE" {
-  availability_zones = ["us-east-1a","us-east-1a"]
+  vpc_zone_identifier = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-1.id]
   desired_capacity   = 1
   max_size           = 1
   min_size           = 1
