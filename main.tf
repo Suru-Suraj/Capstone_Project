@@ -253,7 +253,9 @@ output "lb_dns_name" {
 }
 
 resource "aws_autoscaling_group" "CAPSTONE" {
-  launch_template = aws_launch_template.CAPSTONE.id
+  launch_template {
+    id = aws_launch_template.CAPSTONE.id
+  }
   min_size = 1
   max_size = 1
   desired_capacity = 1
