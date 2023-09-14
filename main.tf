@@ -233,7 +233,7 @@ resource "aws_elb" "CAPSTONE" {
     interval            = 30
   }
 
-  instances                   = aws_instance.CAPSTONE-PUBLIC
+  instances                   = aws_instance.CAPSTONE-PUBLIC.id
   cross_zone_load_balancing   = true
   idle_timeout                = 400
   connection_draining         = true
