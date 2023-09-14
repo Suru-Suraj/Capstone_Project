@@ -16,10 +16,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Change the Directory
-      run: cd Terraform_and_Ansible
-    - name: ls
-      run: ls
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
     - name: Configure AWS Credentials
@@ -29,11 +25,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
     - name: Terraform Init
-      run: terraform init -chdir Terraform_and_Ansible
+      run: terraform init
+      working-directory: Terraform_and_Ansible
     - name: Terraform Plan
-      run: terraform plan -chdir Terraform_and_Ansible
+      run: terraform plan
     - name: Terraform Apply
-      run: terraform apply -chdir Terraform_and_Ansible -input=false -auto-approve 
+      run: terraform apply -input=false -auto-approve 
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
       if: failure() || success()
