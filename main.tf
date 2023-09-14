@@ -207,8 +207,8 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
 
 
 
-resource "aws_s3_bucket" "CAPSTONE" {
-  bucket = "CAPSTONE"
+resource "aws_s3_bucket" "capstone764001" {
+  bucket = "capstone764001"
 
   tags = {
     Name        = "CAPSTONE"
@@ -225,8 +225,8 @@ resource "aws_elb" "CAPSTONE" {
   internal           = false
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
   access_logs {
-    bucket        = "CAPSTONE"
-    bucket_prefix = "CAPSTONE"
+    bucket        = "capstone764001"
+    bucket_prefix = "capstone764001"
     interval      = 60
   }
   security_groups = [aws_security_group.CAPSTONE.id]
