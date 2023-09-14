@@ -6,6 +6,7 @@ resource "aws_vpc" "CAPSTONE" {
     Name = "CAPSTONE"
   }
 }
+
 resource "aws_subnet" "PUBLIC-1" {
   vpc_id     = aws_vpc.CAPSTONE.id
   cidr_block = "10.0.1.0/24"
@@ -15,6 +16,7 @@ resource "aws_subnet" "PUBLIC-1" {
     Name = "PUBLIC-1"
   }
 }
+
 resource "aws_subnet" "PUBLIC-2" {
   vpc_id     = aws_vpc.CAPSTONE.id
   cidr_block = "10.0.2.0/24"
@@ -24,6 +26,7 @@ resource "aws_subnet" "PUBLIC-2" {
     Name = "PUBLIC-2"
   }
 }
+
 resource "aws_subnet" "PRIVATE" {
   vpc_id     = aws_vpc.CAPSTONE.id
   cidr_block = "10.0.3.0/24"
@@ -32,36 +35,43 @@ resource "aws_subnet" "PRIVATE" {
     Name = "PRIVATE"
   }
 }
+
 resource "aws_route_table" "PUBLIC" {
   vpc_id = aws_vpc.CAPSTONE.id
   tags = {
     Name = "PUBLIC"
   }
 }
+
 resource "aws_route_table" "PRIVATE" {
   vpc_id = aws_vpc.CAPSTONE.id
   tags = {
     Name = "PRIVATE"
   }
 }
+
 resource "aws_route_table_association" "PUBLIC-1" {
   subnet_id      = aws_subnet.PUBLIC-1.id
   route_table_id = aws_route_table.PUBLIC.id
 }
+
 resource "aws_route_table_association" "PUBLIC-2" {
   subnet_id      = aws_subnet.PUBLIC-2.id
   route_table_id = aws_route_table.PUBLIC.id
 }
+
 resource "aws_route_table_association" "PRIVATE" {
   subnet_id      = aws_subnet.PRIVATE.id
   route_table_id = aws_route_table.PRIVATE.id
 }
+
 resource "aws_internet_gateway" "CAPSTONE" {
   vpc_id = aws_vpc.CAPSTONE.id
   tags = {
     Name = "CAPSTONE"
   }
 }
+
 resource "aws_route" "internet_gateway_route" {
   route_table_id         = aws_route_table.PUBLIC.id
   destination_cidr_block = "0.0.0.0/0"
@@ -69,11 +79,9 @@ resource "aws_route" "internet_gateway_route" {
 }
 
 resource "aws_eip" "CAPSTONE" {
-  domain   = "vpc"
-  tags = {
-    Name = "CAPSTONE"
-  }
+  instance = aws_instance.CAPSTONE-PUBLIC.id
 }
+
 resource "aws_nat_gateway" "CAPSTONE" {
   allocation_id = aws_eip.CAPSTONE.id
   subnet_id     = aws_subnet.PUBLIC-1.id
@@ -81,10 +89,11 @@ resource "aws_nat_gateway" "CAPSTONE" {
     Name = "CAPSTONE"
   }
 }
-resource "aws_route" "r" {
-  route_table_id  = aws_route_table.PRIVATE.id
+
+resource "aws_route" "private_route" {
+  route_table_id         = aws_route_table.PRIVATE.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id  = aws_nat_gateway.CAPSTONE.id
+  nat_gateway_id          = aws_nat_gateway.CAPSTONE.id
 }
 
 resource "aws_security_group" "CAPSTONE" {
@@ -99,24 +108,25 @@ resource "aws_security_group" "CAPSTONE" {
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
   }
+
   ingress {
-    description      = "TLS from VPC"
+    description      = "SSH from VPC"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
   }
 
-    ingress {
-    description      = "TLS from VPC"
+  ingress {
+    description      = "HTTP from VPC"
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
   }
 
-    ingress {
-    description      = "TLS from VPC"
+  ingress {
+    description      = "Custom App Port from VPC"
     from_port        = 3000
     to_port          = 3000
     protocol         = "tcp"
@@ -130,11 +140,8 @@ resource "aws_security_group" "CAPSTONE" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  tags = {
-    Name = "CAPSTONE"
-  }
 }
+
 resource "aws_instance" "CAPSTONE-PUBLIC" {
   ami           = "ami-06a0a61d43cf06546"
   instance_type = "t2.micro"
@@ -145,6 +152,7 @@ resource "aws_instance" "CAPSTONE-PUBLIC" {
     Name = "CAPSTONE-PUBLIC"
   }
 }
+
 resource "aws_instance" "CAPSTONE-PRIVATE" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
@@ -155,6 +163,7 @@ resource "aws_instance" "CAPSTONE-PRIVATE" {
     Name = "CAPSTONE-PRIVATE"
   }
 }
+
 output "public_private_ip" {
   value = aws_instance.CAPSTONE-PUBLIC.private_ip
 }
@@ -166,7 +175,6 @@ output "public_public_ip" {
 output "private_private_ip" {
   value = aws_instance.CAPSTONE-PRIVATE.private_ip
 }
-
 
 resource "aws_launch_template" "CAPSTONE" {
   name = "CAPSTONE"
@@ -183,11 +191,6 @@ resource "aws_launch_template" "CAPSTONE" {
   }
 }
 
-
-
-
-
-
 resource "aws_lb_target_group" "CAPSTONE" {
   name     = "CAPSTONE"
   port     = 3000
@@ -195,17 +198,11 @@ resource "aws_lb_target_group" "CAPSTONE" {
   vpc_id   = aws_vpc.CAPSTONE.id
 }
 
- 
-
 resource "aws_lb_target_group_attachment" "CAPSTONE" {
   target_group_arn = aws_lb_target_group.CAPSTONE.arn
   target_id        = aws_instance.CAPSTONE-PUBLIC.id
   port             = 3000
 }
-
-
-
-
 
 resource "aws_s3_bucket" "capstone764001" {
   bucket = "capstone764001"
@@ -216,17 +213,13 @@ resource "aws_s3_bucket" "capstone764001" {
   }
 }
 
-
-
-
-
 resource "aws_elb" "CAPSTONE" {
   name               = "CAPSTONE"
   internal           = false
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
   access_logs {
-    bucket        = "capstone764001"
-    bucket_prefix = "capstone764001"
+    bucket        = aws_s3_bucket.capstone764001.bucket
+    bucket_prefix = "CAPSTONE"
     interval      = 60
   }
   security_groups = [aws_security_group.CAPSTONE.id]
@@ -243,7 +236,6 @@ resource "aws_elb" "CAPSTONE" {
     target              = "TCP:3000"
     interval            = 30
   }
-
   instances                   = [aws_instance.CAPSTONE-PUBLIC.id]
   cross_zone_load_balancing   = true
   idle_timeout                = 400
@@ -254,25 +246,13 @@ resource "aws_elb" "CAPSTONE" {
     Name = "CAPSTONE"
   }
 }
- 
-
-
-
 
 output "lb_dns_name" {
   value = aws_elb.CAPSTONE.dns_name
 }
 
-
-
-
-
-
-
-
-
 resource "aws_autoscaling_group" "CAPSTONE" {
-  availability_zones = ["us-east-1a","us-east-1b"]
+  availability_zones = ["us-east-1a", "us-east-1b"]
   desired_capacity   = 1
   max_size           = 1
   min_size           = 1
