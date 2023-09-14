@@ -136,7 +136,7 @@ resource "aws_security_group" "CAPSTONE" {
   }
 }
 resource "aws_instance" "CAPSTONE-PUBLIC" {
-  ami           = "ami-053b0d53c279acc90"
+  ami           = "ami-06a0a61d43cf06546"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
   subnet_id = aws_subnet.PUBLIC-1.id
@@ -208,30 +208,48 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
 
 
 
-resource "aws_lb" "CAPSTONE" {
+resource "aws_elb" "CAPSTONE" {
   name               = "CAPSTONE"
+  availability_zones = ["us-east-1a", "us-east-1b"]
   internal           = false
-  enable_deletion_protection = false 
+  access_logs {
+    bucket        = "CAPSTONE"
+    bucket_prefix = "CAPSTONE"
+    interval      = 60
+  }
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
-}
+  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
+  listener {
+    instance_port     = 3000
+    instance_protocol = "tcp"
+    lb_port           = 3000
+    lb_protocol       = "tcp"
+  }
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "TCP:3000/"
+    interval            = 30
+  }
 
- 
+  instances                   = aws_instance.CAPSTONE-PUBLIC
+  cross_zone_load_balancing   = true
+  idle_timeout                = 400
+  connection_draining         = true
+  connection_draining_timeout = 400
 
-resource "aws_lb_listener" "terr_lb_listener" {
-  load_balancer_arn = aws_lb.CAPSTONE.arn
-  port              = 3000
-  protocol          = "TCP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.CAPSTONE.arn
+  tags = {
+    Name = "CAPSTONE"
   }
 }
-
  
 
+
+
+
 output "lb_dns_name" {
-  value = aws_lb.CAPSTONE.dns_name
+  value = aws_elb.CAPSTONE.dns_name
 }
 
 
