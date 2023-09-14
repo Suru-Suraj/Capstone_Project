@@ -92,12 +92,25 @@ resource "aws_security_group" "CAPSTONE" {
   }
 }
 
+resource "aws_key_pair" "capstone" {
+  key_name   = "capstone"
+  public_key = tls_private_key.capstone.public_key_openssh
+}
+resource "tls_private_key" "capstone" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+resource "local_file" "capstone" {
+  content  = tls_private_key.capstone.private_key_pem
+  filename = "capstone.pem"
+}
+
 resource "aws_instance" "CAPSTONE" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
   subnet_id = aws_subnet.PUBLIC.id
-  key_name = "suru"
+  key_name = "capstone"
   tags = {
     Name = "CAPSTONE-PUBLIC"
   }
@@ -109,4 +122,8 @@ output "private_ip" {
 
 output "public_ip" {
   value = aws_instance.CAPSTONE.public_ip
+}
+output "instance_id" {
+  description = "Instance ID of the EC2 instance"
+  value       = aws_instance.CAPSTONE.id
 }
