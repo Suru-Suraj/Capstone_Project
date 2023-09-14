@@ -16,8 +16,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Change the Directory
-      run: cd ./Terraform_and_Ansible
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
     - name: Configure AWS Credentials
@@ -31,7 +29,7 @@ jobs:
     - name: Terraform Plan
       run: terraform plan 
     - name: Terraform Apply
-      run: terraform apply -input=false -auto-approve 
+      run: terraform apply -chdir Terraform_and_Ansible -input=false -auto-approve 
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
       if: failure() || success()
