@@ -29,10 +29,10 @@ jobs:
     - name: Terraform Plan
       run: terraform plan 
     - name: Terraform Apply
-      run: terraform apply -input=false -auto-approve
+      run: terraform apply -input=false -auto-approve 
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
-      if: failure()
+      if: failure() || success()
     - name: Terraform Output(private)
       run: terraform output private_private_ip
     - name: Terraform Output(public)-private
