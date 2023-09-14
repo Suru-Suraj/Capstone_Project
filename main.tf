@@ -185,7 +185,7 @@ output "private_private_ip" {
 }
 
 resource "aws_launch_template" "CAPSTONE" {
-  name = "CAPSTONE"
+  name_prefix = "CAPSTONE"
   image_id = "ami-06a0a61d43cf06546"
   instance_type = "t2.micro"
   key_name = "suru"
