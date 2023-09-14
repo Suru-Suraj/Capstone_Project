@@ -26,17 +26,17 @@ jobs:
         aws-region: us-east-1
     - name: Terraform Init
       run: terraform init
-      working-directory: 2.Autoscaling_and_LoadBalancing
+      working-directory: 2.AMI
     - name: Terraform Plan
       run: terraform plan
-      working-directory: 2.Autoscaling_and_LoadBalancing
+      working-directory: 2.AMI
     - name: Terraform Apply
       run: terraform apply -input=false -auto-approve 
-      working-directory: 2.Autoscaling_and_LoadBalancing
+      working-directory: 2.AMI
     - name: Terraform Destroy
       run: terraform destroy -auto-approve
-      working-directory: 2.Autoscaling_and_LoadBalancing
+      working-directory: 2.AMI
       if: failure() || success()
-    - name: Terraform Output(Load Balancer DNS)
-      run: terraform output lb_dns
-      working-directory: 2.Autoscaling_and_LoadBalancing
+    - name: Terraform Output(AMI-ID)
+      run: terraform output ami_id
+      working-directory: 2.AMI
