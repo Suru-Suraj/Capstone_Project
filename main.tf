@@ -218,7 +218,7 @@ resource "aws_elb" "CAPSTONE" {
     interval      = 60
   }
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
-  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
+  security_groups = [aws_security_group.CAPSTONE.id]
   listener {
     instance_port     = 3000
     instance_protocol = "tcp"
