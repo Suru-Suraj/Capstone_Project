@@ -238,13 +238,6 @@ output "lb_dns_name" {
   value = aws_elb.CAPSTONE.dns_name
 }
 
-
-
-
-
-
-
-
 resource "aws_launch_template" "CAPSTONE" {
   name_prefix   = "CAPSTONE"
   image_id      = "ami-06a0a61d43cf06546"
