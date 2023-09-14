@@ -210,7 +210,6 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
 
 resource "aws_elb" "CAPSTONE" {
   name               = "CAPSTONE"
-  availability_zones = ["us-east-1a", "us-east-1b"]
   internal           = false
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
   access_logs {
