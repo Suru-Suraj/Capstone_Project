@@ -212,25 +212,10 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
   port             = 3000
 }
 
-resource "aws_s3_bucket" "capstone764001" {
-  bucket = "capstone764001"
-  permissions = FULL_CONTROL
-
-  tags = {
-    Name        = "CAPSTONE"
-    Environment = "production"
-  }
-}
-
 resource "aws_elb" "CAPSTONE" {
   name               = "CAPSTONE"
   internal           = false
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
-  access_logs {
-    bucket        = aws_s3_bucket.capstone764001.bucket
-    bucket_prefix = "capstone764001"
-    interval      = 60
-  }
   security_groups = [aws_security_group.CAPSTONE.id]
   listener {
     instance_port     = 3000
