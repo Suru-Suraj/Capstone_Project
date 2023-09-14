@@ -190,9 +190,15 @@ resource "aws_launch_template" "CAPSTONE" {
   instance_type = "t2.micro"
   key_name = "suru"
   vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
+    block_device_mappings {
+    device_name = "/dev/sda1"
+    ebs {
+      volume_size = 8
+      delete_on_termination = true
+    }
+  }
   tag_specifications {
     resource_type = "instance"
-
     tags = {
       Name = "test"
     }
