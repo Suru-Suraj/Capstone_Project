@@ -151,7 +151,7 @@ resource "aws_security_group" "CAPSTONE" {
     description      = "Custom port 3000 from VPC"
     from_port        = 3000
     to_port          = 3000
-    protocol         = "http"
+    protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
   }
 
@@ -185,7 +185,7 @@ resource "aws_instance" "CAPSTONE" {
 resource "aws_lb_target_group" "CAPSTONE" {
   name = "CAPSTONE"
   port = 3000
-  protocol = "HTTP"
+  protocol = "tcp"
   vpc_id   = aws_vpc.CAPSTONE.id
 }
 
@@ -196,23 +196,32 @@ resource "aws_lb_target_group_attachment" "CAPSTONE" {
   port = 3000
 }
 
-# Create a load balancer
-resource "aws_lb" "CAPSTONE" {
-  name = "CAPSTONE"
+# Create a Classic load balancer
+resource "aws_elb" "CAPSTONE" {
+  name               ="CAPSTONE"
   internal           = false
-  load_balancer_type = "application"
   subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
   security_groups = [aws_security_group.CAPSTONE.id]
-}
-
-# Load Balancer Listener
-resource "aws_lb_listener" "CAPSTONE" {
-  load_balancer_arn = aws_lb.CAPSTONE.arn
-  port = 3000
-  protocol = "HTTP"
-  default_action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.CAPSTONE.arn
+  listener {
+    instance_port     = 3000
+    instance_protocol = "tcp"
+    lb_port           = 3000
+    lb_protocol       = "tcp"
+  }
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "TCP:3000"
+    interval            = 30
+  }
+  instances                   = [aws_instance.CAPSTONE.id]
+  cross_zone_load_balancing   = true
+  idle_timeout                = 400
+  connection_draining         = true
+  connection_draining_timeout = 400
+  tags = {
+    Name = "CAPSTONE"
   }
 }
 
@@ -226,9 +235,9 @@ resource "aws_launch_template" "CAPSTONE" {
 # Create an autoscaling group
 resource "aws_autoscaling_group" "CAPSTONE" {
   vpc_zone_identifier = [aws_subnet.PRIVATE.id]
-  desired_capacity   = 1
-  max_size           = 1
-  min_size           = 1
+  desired_capacity   = 2
+  max_size           = 3
+  min_size           = 2
 
   launch_template {
     id      = aws_launch_template.CAPSTONE.id
@@ -239,6 +248,6 @@ resource "aws_autoscaling_group" "CAPSTONE" {
 # Attachement of autoscaling groups and target groups
 resource "aws_autoscaling_attachment" "example" {
   autoscaling_group_name = aws_autoscaling_group.CAPSTONE.id
-  lb_target_group_arn    = aws_lb_target_group.CAPSTONE.arn
+  lb_target_group_arn    = aws_elb_target_group.CAPSTONE.arn
 
 }
