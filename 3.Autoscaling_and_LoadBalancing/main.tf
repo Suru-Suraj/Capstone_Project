@@ -181,21 +181,6 @@ resource "aws_instance" "CAPSTONE" {
   }
 }
 
-# Create a target group for the load balancer
-resource "aws_lb_target_group" "CAPSTONE" {
-  name = "CAPSTONE"
-  port = 3000
-  protocol = "tcp"
-  vpc_id   = aws_vpc.CAPSTONE.id
-}
-
-# Attach the EC2 instance to the target group
-resource "aws_lb_target_group_attachment" "CAPSTONE" {
-  target_group_arn = aws_lb_target_group.CAPSTONE.arn
-  target_id = aws_instance.CAPSTONE.id
-  port = 3000
-}
-
 # Create a Classic load balancer
 resource "aws_elb" "CAPSTONE" {
   name               ="CAPSTONE"
@@ -248,6 +233,5 @@ resource "aws_autoscaling_group" "CAPSTONE" {
 # Attachement of autoscaling groups and target groups
 resource "aws_autoscaling_attachment" "example" {
   autoscaling_group_name = aws_autoscaling_group.CAPSTONE.id
-  lb_target_group_arn    = aws_elb_target_group.CAPSTONE.arn
-
+  elb                    = aws_elb.CAPSTONE.id
 }
