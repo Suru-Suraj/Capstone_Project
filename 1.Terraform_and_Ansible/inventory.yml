@@ -1,0 +1,1 @@
+CAPSTONE ansible_host=54.169.143.50 ansible_user=ubuntu ansible_ssh_private_key_file=capstone.pem
