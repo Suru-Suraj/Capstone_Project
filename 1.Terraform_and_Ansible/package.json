@@ -1,6 +1,14 @@
 {
-  "name": "Hello World",
+  "name": "Capstone_Project",
   "version": "1.0.0",
-  "description": "My first Node.js project",
-  "main": "index.js"
+  "description": "A simple Node.js application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Suru Suraj",
+  "license": "suru",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }

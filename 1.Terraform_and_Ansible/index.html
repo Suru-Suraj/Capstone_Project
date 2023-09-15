@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name Animation</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #ff6b6b, #ffc145); /* Vibrant background */
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        
+        .animation {
+            font-size: 48px; /* Larger font size for the name */
+            text-align: center;
+            color: #fff; /* White text color */
+            animation: fadeIn 3s ease-in-out;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for contrast */
+        }
+
+        .paragraph {
+            font-size: 24px; /* Font size for the paragraph */
+            text-align: center;
+            color: #fff; /* White text color */
+            animation: fadeIn 3s ease-in-out;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for contrast */
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="animation">Capstone Project</h1>
+    <p class="paragraph">Done By: Suru Suraj & Sridevi</p>
+</body>
+</html>
