@@ -47,5 +47,5 @@ variable "instance_type" {
 # AMI ID
 variable "ami_id" {
   description = "The ID of the Amazon Machine Image (AMI)."
-  default     = "ami-065f151719855f7fb"
+  default     = "ami-0ecfd7059ba9d96c7"
 }
