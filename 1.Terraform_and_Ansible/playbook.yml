@@ -15,7 +15,7 @@
         name: docker
         state: started
         enabled: true
-   - name: pull my image from dockerhub
+   - name: pulling the image from Dockerhub
      command: docker pull surusuraj200021/suru:node
    - name: run my image as docker  
      command : docker run --name node --restart=always -d surusuraj200021/suru:node
