@@ -119,7 +119,7 @@ resource "aws_route" "CAPSTONE" {
 
 # Create a security group
 resource "aws_security_group" "CAPSTONE" {
-  name        = "allow_tls"
+  name        = "CAPSTONE"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.CAPSTONE.id
 
@@ -185,7 +185,7 @@ resource "aws_instance" "CAPSTONE" {
 resource "aws_elb" "CAPSTONE" {
   name               ="CAPSTONE"
   internal           = false
-  subnets = [aws_subnet.PUBLIC-1.id, aws_subnet.PUBLIC-2.id]
+  subnets = [aws_subnet.PRIVATE.id, aws_subnet.PUBLIC-2.id, aws_subnet.PUBLIC-1.id]
   security_groups = [aws_security_group.CAPSTONE.id]
   listener {
     instance_port     = 3000
@@ -194,11 +194,11 @@ resource "aws_elb" "CAPSTONE" {
     lb_protocol       = "tcp"
   }
   health_check {
-    healthy_threshold   = 2
+    healthy_threshold   = 4
     unhealthy_threshold = 2
-    timeout             = 3
-    target              = "TCP:3000"
-    interval            = 30
+    timeout             = 5
+    target              = "HTTP:80/health"
+    interval            = 300
   }
   instances                   = [aws_instance.CAPSTONE.id]
   cross_zone_load_balancing   = true
