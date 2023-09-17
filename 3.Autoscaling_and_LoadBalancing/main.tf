@@ -181,33 +181,49 @@ resource "aws_instance" "CAPSTONE" {
   }
 }
 
-# Create a Classic load balancer
-resource "aws_elb" "CAPSTONE" {
-  name               ="CAPSTONE"
+# Create a Network load balancer
+resource "aws_lb" "CAPSTONE" {
+  name               = "CAPSTONE"
   internal           = false
-  subnets = [aws_subnet.PRIVATE.id, aws_subnet.PUBLIC-2.id, aws_subnet.PUBLIC-1.id]
-  security_groups = [aws_security_group.CAPSTONE.id]
-  listener {
-    instance_port     = 3000
-    instance_protocol = "tcp"
-    lb_port           = 3000
-    lb_protocol       = "tcp"
-  }
-  health_check {
-    healthy_threshold   = 4
-    unhealthy_threshold = 2
-    timeout             = 5
-    target              = "HTTP:80/health"
-    interval            = 300
-  }
-  instances                   = [aws_instance.CAPSTONE.id]
-  cross_zone_load_balancing   = true
-  idle_timeout                = 400
-  connection_draining         = true
-  connection_draining_timeout = 400
+  load_balancer_type = "network"
+  subnets            = [aws_subnet.PRIVATE.id, aws_subnet.PUBLIC-2.id, aws_subnet.PUBLIC-1.id]
+  enable_cross_zone_load_balancing = true
+  enable_deletion_protection = false
   tags = {
-    Name = "CAPSTONE"
+    Environment = "production"
   }
+}
+
+# Create a listener for the NLB
+resource "aws_lb_listener" "CAPSTONE" {
+  load_balancer_arn = aws_lb.CAPSTONE.arn
+  port              = "3000"
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.CAPSTONE.arn
+  }
+}
+
+# Create a target group for the NLB
+resource "aws_lb_target_group" "CAPSTONE" {
+  name        = "CAPSTONE"
+  port        = 3000
+  protocol    = "TCP"
+  vpc_id      = aws_vpc.CAPSTONE.id
+  target_type = "instance"
+  health_check {
+    port     = 3000
+    protocol = "TCP"
+  }
+}
+
+# Register instances with the target group (e.g., your EC2 instances)
+resource "aws_lb_target_group_attachment" "CAPSTONE" {
+  count             = aws_autoscaling_group.CAPSTONE.desired_capacity
+  target_group_arn  = aws_lb_target_group.CAPSTONE.arn
+  target_id         = aws_instance.CAPSTONE.id
 }
 
 # Create a launch template
@@ -215,14 +231,18 @@ resource "aws_launch_template" "CAPSTONE" {
   name_prefix   = "CAPSTONE"
   image_id      = var.ami_id
   instance_type = var.instance_type
+  vpc_security_group_ids = [aws_security_group.CAPSTONE.id]
+  key_name = var.ssh_key_name
 }
 
-# Create an autoscaling group
+# Update your autoscaling group to use the NLB target group
 resource "aws_autoscaling_group" "CAPSTONE" {
   vpc_zone_identifier = [aws_subnet.PRIVATE.id]
   desired_capacity   = 2
   max_size           = 3
   min_size           = 2
+
+  target_group_arns = [aws_lb_target_group.CAPSTONE.arn]
 
   launch_template {
     id      = aws_launch_template.CAPSTONE.id
@@ -230,8 +250,3 @@ resource "aws_autoscaling_group" "CAPSTONE" {
   }
 }
 
-# Attachement of autoscaling groups and target groups
-resource "aws_autoscaling_attachment" "example" {
-  autoscaling_group_name = aws_autoscaling_group.CAPSTONE.id
-  elb                    = aws_elb.CAPSTONE.id
-}

@@ -1,4 +1,4 @@
 # Output the DNS name of the load balancer
 output "lb_dns" {
-  value = aws_elb.CAPSTONE.dns_name
+  value = aws_lb.CAPSTONE.dns_name
 }
