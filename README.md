@@ -1,9 +1,4 @@
-<center>
-
-# Project Overview
-
-</center>
-
+## Project Overview
 
 ### Step 1: Infrastructure as Code with Terraform and Configuration Management with Ansible
 
